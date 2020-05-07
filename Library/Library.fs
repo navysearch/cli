@@ -1,6 +1,8 @@
 namespace NavySearch
 
 open System
+open Algolia.Search.Clients
+open Algolia.Search.Models.Search
 
 module Common =
     type MessageType =
@@ -128,3 +130,15 @@ module Common =
              >> List.map (string)
              >> List.reduce (fun acc item -> sprintf "%s%s" acc item)
              >> fun text -> { data with Text = text })
+
+module Data =
+    type Hit =
+        { objectID: string
+          id: string
+          year: string
+          num: string
+          ``type``: string
+          code: string
+          subject: string
+          text: string
+          url: string }
