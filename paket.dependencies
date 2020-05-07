@@ -3,6 +3,7 @@ source https://api.nuget.org/v3/index.json
 nuget Algolia.Search 6.6.0
 nuget FSharp.Core
 nuget coverlet.collector 1.0.1
+nuget FSharp.Data
 nuget FsUnit.Xunit 3.8.1
 nuget Microsoft.NET.Test.Sdk 16.2.0
 nuget xunit >= 2.4.1 < 2.5

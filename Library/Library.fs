@@ -1,6 +1,7 @@
 namespace NavySearch
 
 open System
+open FSharp.Data
 open Algolia.Search.Clients
 open Algolia.Search.Models.Search
 
@@ -142,3 +143,10 @@ module Data =
           subject: string
           text: string
           url: string }
+
+    let scrapeMessageLinks (url: string) =
+        HtmlDocument.Load(url).Descendants [ "a" ]
+        |> Seq.choose (fun x -> x.TryGetAttribute("href") |> Option.map (fun a -> x.InnerText(), a.Value()))
+        |> Seq.map (fun (_, href) -> href)
+        |> Seq.filter (fun (x : string) -> x.EndsWith(".txt"))
+        |> Seq.toList
