@@ -1,15 +1,12 @@
 module Tests
 
-open System
-open FsUnit.Xunit
 open Xunit
+open FsUnit.Xunit
 
-open Library.Say
-
-[<Fact>]
-let ``My test`` () =
-    Assert.True(true)
+open NavySearch.Common
 
 [<Fact>]
-let ``Libary Smoke Test`` () =
-    hello "Tanaka" |> should equal "Ohayo Tanaka san"
+let ``can get message type from message code`` () =
+    getType "NAV" |> should equal NAVADMIN
+    getType "ALN" |> should equal ALNAV
+    getType "FOO" |> should equal UNKNOWN
