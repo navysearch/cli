@@ -2,11 +2,13 @@ namespace NavySearch
 
 open System
 open FSharp.Data
+open Argu
 open Algolia.Search.Clients
 open Algolia.Search.Models.Search
 
 module Common =
-    let getCurrentYear () = (string DateTime.Now.Year).[2..] |> int
+    let getCurrentYear() = (string DateTime.Now.Year).[2..] |> int
+
     let takeLetters value =
         let letters =
             [ for ch in value -> ch ]
@@ -15,7 +17,7 @@ module Common =
             |> Seq.map string
         match Seq.isEmpty letters with
         | true -> ""
-        | false -> 
+        | false ->
             let join acc item = sprintf "%s%s" acc item
             letters |> Seq.reduce (join)
 
@@ -158,3 +160,47 @@ module Data =
         |> Seq.map (fun (_, href) -> href)
         |> Seq.filter (fun (x: string) -> x.EndsWith(".txt"))
         |> Seq.toList
+
+module CommandLine =
+    type OpenArguments =
+        | [<AltCommandLine("-a")>] App of name: string
+        interface IArgParserTemplate with
+            member this.Usage =
+                match this with
+                | App _ -> "Name of application to open (ex: nsips)."
+
+    and DownloadArguments =
+        | [<AltCommandLine("-t")>] Type of str: string
+        | [<AltCommandLine("-y")>] Year of YY: int
+        interface IArgParserTemplate with
+            member this.Usage =
+                match this with
+                | Type _ -> "Message type to download: nav (NAVADMIN) or aln (ALNAV)."
+                | Year _ -> "Year to download messages from."
+
+    and Arguments =
+        | Version
+        | [<AltCommandLine("-v")>] Verbose
+        | [<CliPrefix(CliPrefix.None)>] Open of ParseResults<OpenArguments>
+        | [<CliPrefix(CliPrefix.None)>] Download of ParseResults<DownloadArguments>
+        interface IArgParserTemplate with
+            member this.Usage =
+                match this with
+                | Version -> "Print the version."
+                | Verbose -> "Print a lot of output to stdout."
+                | Open _ -> "Perform a string search and return results."
+                | Download _ -> "Download messages for a given year."
+
+    let log =
+        let lockObj = obj()
+        fun color s ->
+            lock lockObj (fun _ ->
+                Console.ForegroundColor <- color
+                printfn "%s" s
+                Console.ResetColor())
+
+    let complete = log ConsoleColor.Magenta
+    let ok = log ConsoleColor.Green
+    let info = log ConsoleColor.Cyan
+    let warn = log ConsoleColor.Yellow
+    let error = log ConsoleColor.Red
