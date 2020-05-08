@@ -6,12 +6,28 @@ open Algolia.Search.Clients
 open Algolia.Search.Models.Search
 
 module Common =
+    let getCurrentYear () = (string DateTime.Now.Year).[2..] |> int
+    let takeLetters value =
+        let letters =
+            [ for ch in value -> ch ]
+            |> List.toSeq
+            |> Seq.takeWhile (Char.IsNumber >> not)
+            |> Seq.map string
+        match Seq.isEmpty letters with
+        | true -> ""
+        | false -> 
+            let join acc item = sprintf "%s%s" acc item
+            letters |> Seq.reduce (join)
+
+module Message =
+    open Common
+
     type MessageType =
         | NAVADMIN
         | ALNAV
         | UNKNOWN
 
-    type MessageData =
+    type MessageInfo =
         { MessageType: MessageType
           Number: int
           Year: int
@@ -85,14 +101,6 @@ module Common =
         | x when x = 1 -> sprintf "%i" years.Head
         | _ -> ""
 
-    let takeLetters value =
-        let join acc item = sprintf "%s%s" acc item
-        [ for ch in value -> ch ]
-        |> List.toSeq
-        |> Seq.takeWhile (Char.IsNumber >> not)
-        |> Seq.map string
-        |> Seq.reduce (join)
-
     let parseMessageIdentifier (value: string) =
         let messageType =
             match takeLetters value with
@@ -122,7 +130,7 @@ module Common =
 
         parseMessageIdentifier messageIdentifier
 
-    let chunkByTextValue (data: MessageData) size =
+    let chunkByTextValue (data: MessageInfo) size =
         [ for s in data.Text -> s ]
         |> List.toSeq
         |> Seq.chunkBySize size
@@ -148,5 +156,5 @@ module Data =
         HtmlDocument.Load(url).Descendants [ "a" ]
         |> Seq.choose (fun x -> x.TryGetAttribute("href") |> Option.map (fun a -> x.InnerText(), a.Value()))
         |> Seq.map (fun (_, href) -> href)
-        |> Seq.filter (fun (x : string) -> x.EndsWith(".txt"))
+        |> Seq.filter (fun (x: string) -> x.EndsWith(".txt"))
         |> Seq.toList
