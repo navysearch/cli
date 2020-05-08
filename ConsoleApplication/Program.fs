@@ -1,4 +1,4 @@
-﻿// Learn more about F# at http://fsharp.org
+// Learn more about F# at http://fsharp.org
 
 open System
 open dotenv.net
@@ -26,9 +26,8 @@ let main argv =
     let parser = ArgumentParser.Create<Arguments>(programName = "usn", errorHandler = errorHandler)
     let results = parser.ParseCommandLine argv
     printfn "Got parse results %A" <| results.GetAllResults()
-    let output =
-        match results with
-        | p when p.Contains(Download) -> "Download in progress..."
-        | _ -> "Nothing ventured, nothing gained"
-    warn <| output
+    match results with
+    | p when p.Contains(Download) -> "Download in progress..."
+    | _ -> "Nothing ventured, nothing gained"
+    |> warn
     0 // return an integer exit code
