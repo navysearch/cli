@@ -9,13 +9,23 @@ open NavySearch.CommandLine
 
 DotEnv.Config()
 
+[<CliPrefix(CliPrefix.DoubleDash)>]
+[<NoAppSettings>]
+type Arguments =
+    | [<MainCommand>] Files of FILES: string list
+    | [<AltCommandLine("-a")>] All
+    | [<AltCommandLine("-h")>] Human_Readable
+    | Version
+    interface IArgParserTemplate with
+        member arg.Usage =
+            match arg with
+            | All -> "do not ignore entries starting with ."
+            | Human_Readable -> "with -l and/or -s, print human readable sizes\n(e.g., 1K 234M 2G)"
+            | Version -> "output version information and exit"
+            | Files _ -> "File expression to list"
+
 [<EntryPoint>]
 let main argv =
-    // let url = "https://www.public.navy.mil/bupers-npc/reference/messages/NAVADMINS/Pages/NAVADMIN2020.aspx"
-    // let results = scrapeMessageLinks url
-    // printf "%A" results
-    printfn "id: %A" (Environment.GetEnvironmentVariable("ALGOLIA_APP_ID"))
-    printfn "key: %A" (Environment.GetEnvironmentVariable("ALGOLIA_ADMIN_API_KEY"))
     let errorHandler =
         ProcessExiter
             (colorizer =
@@ -25,9 +35,10 @@ let main argv =
 
     let parser = ArgumentParser.Create<Arguments>(programName = "usn", errorHandler = errorHandler)
     let results = parser.ParseCommandLine argv
-    printfn "Got parse results %A" <| results.GetAllResults()
-    match results with
-    | p when p.Contains(Download) -> "Download in progress..."
-    | _ -> "Nothing ventured, nothing gained"
+    results.GetAllResults()
+    |> sprintf "Results are %A"
     |> warn
+    results.GetResult(Files, defaultValue = [])
+    |> sprintf "Files are %A"
+    |> info
     0 // return an integer exit code

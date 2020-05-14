@@ -2,7 +2,6 @@ namespace NavySearch
 
 open System
 open FSharp.Data
-open Argu
 open Algolia.Search.Clients
 open Algolia.Search.Models.Search
 
@@ -143,6 +142,17 @@ module Message =
              >> fun text -> { data with Text = text })
 
 module Data =
+    open Message
+
+    let scrapeMessageLinks messageType year =
+        let url = (createNpcPageUrl messageType year)
+        HtmlDocument.Load(url).Descendants [ "a" ]
+        |> Seq.choose (fun x -> x.TryGetAttribute("href") |> Option.map (fun a -> x.InnerText(), a.Value()))
+        |> Seq.map (fun (_, href) -> href)
+        |> Seq.filter (fun (x: string) -> x.EndsWith(".txt"))
+        |> Seq.toList
+
+module Algolia =
     type Hit =
         { objectID: string
           id: string
@@ -154,43 +164,15 @@ module Data =
           text: string
           url: string }
 
-    let scrapeMessageLinks (url: string) =
-        HtmlDocument.Load(url).Descendants [ "a" ]
-        |> Seq.choose (fun x -> x.TryGetAttribute("href") |> Option.map (fun a -> x.InnerText(), a.Value()))
-        |> Seq.map (fun (_, href) -> href)
-        |> Seq.filter (fun (x: string) -> x.EndsWith(".txt"))
-        |> Seq.toList
+    let getMessagesForYear (id: string) (key: string) (year: int) =
+        let client = SearchClient(id, key)
+        let index = client.InitIndex("message")
+        let results = index.Search(Query())
+        results.Hits
+        |> Seq.map (fun x -> x.subject)
+        |> Seq.take 10
 
 module CommandLine =
-    type OpenArguments =
-        | [<AltCommandLine("-a")>] App of name: string
-        interface IArgParserTemplate with
-            member this.Usage =
-                match this with
-                | App _ -> "Name of application to open (ex: nsips)."
-
-    and DownloadArguments =
-        | [<AltCommandLine("-t")>] Type of str: string
-        | [<AltCommandLine("-y")>] Year of YY: int
-        interface IArgParserTemplate with
-            member this.Usage =
-                match this with
-                | Type _ -> "Message type to download: nav (NAVADMIN) or aln (ALNAV)."
-                | Year _ -> "Year to download messages from."
-
-    and Arguments =
-        | Version
-        | [<AltCommandLine("-v")>] Verbose
-        | [<CliPrefix(CliPrefix.None)>] Open of ParseResults<OpenArguments>
-        | [<CliPrefix(CliPrefix.None)>] Download of ParseResults<DownloadArguments>
-        interface IArgParserTemplate with
-            member this.Usage =
-                match this with
-                | Version -> "Print the version."
-                | Verbose -> "Print a lot of output to stdout."
-                | Open _ -> "Perform a string search and return results."
-                | Download _ -> "Download messages for a given year."
-
     let log =
         let lockObj = obj()
         fun color s ->
