@@ -35,6 +35,10 @@ let main argv =
 
     let parser = ArgumentParser.Create<Arguments>(programName = "usn", errorHandler = errorHandler)
     let results = parser.ParseCommandLine argv
+    let data = getMessage NAVADMIN 20 3
+    data
+    |> sprintf "%s"
+    |> info
     results.GetAllResults()
     |> sprintf "Results are %A"
     |> warn

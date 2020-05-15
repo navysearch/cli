@@ -64,7 +64,7 @@ module Message =
         | ALNAV -> sprintf "%s/ALNAVS/Pages/ALNAV20%s.aspx" npcMessagesUrl yearString
         | UNKNOWN -> sprintf "%s/NAVADMINS/Pages/NAVADMIN20%s.aspx" npcMessagesUrl yearString
 
-    let createMessageUrl messageType year number =
+    let createMessageUriFragment messageType year number =
         let code = getCode messageType
 
         let subfolder =
@@ -151,6 +151,12 @@ module Data =
         |> Seq.map (fun (_, href) -> href)
         |> Seq.filter (fun (x: string) -> x.EndsWith(".txt"))
         |> Seq.toList
+
+    let getMessage messageType year number =
+        let url = sprintf "http://www.public.navy.mil/%s" (createMessageUriFragment messageType year number)
+        async {
+            let! data = Http.AsyncRequestString(url)
+            return data } |> Async.RunSynchronously
 
 module Algolia =
     type Hit =
