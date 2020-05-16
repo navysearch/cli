@@ -98,7 +98,10 @@ module Message =
                 |> Seq.last
 
             sprintf "%sand %i" intial last
-        | x when x = 2 -> sprintf "%i and %i" years.Head years.Tail.Head
+        | x when x = 2 ->
+            match years.Head with
+            | x when x < years.Tail.Head -> sprintf "%i and %i" x years.Tail.Head
+            | x -> sprintf "%i and %i" years.Tail.Head x
         | x when x = 1 -> sprintf "%i" years.Head
         | _ -> ""
 
@@ -118,16 +121,18 @@ module Message =
           Text = "" }
 
     let parseMessageUri (value: string) =
+        let head (x: string list) = x.Head
+
         let filename =
             value.Split('/')
             |> Array.toList
             |> List.rev
-            |> fun x -> x.Head
+            |> head
 
         let messageIdentifier =
             filename.Split('.')
             |> Array.toList
-            |> fun x -> x.Head
+            |> head
 
         parseMessageIdentifier messageIdentifier
 
