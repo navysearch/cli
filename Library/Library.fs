@@ -1,6 +1,7 @@
 namespace NavySearch
 
 open System
+open System.Text.RegularExpressions
 open FSharp.Data
 open FParsec
 open Algolia.Search.Clients
@@ -19,8 +20,7 @@ module Common =
             |> Seq.map string
         match Seq.isEmpty letters with
         | true -> ""
-        | false ->
-            letters |> Seq.reduce (join)
+        | false -> letters |> Seq.reduce (join)
 
 module Message =
     open Common
@@ -151,18 +151,56 @@ module Message =
     module Parser =
         open Common
 
+        let removeNewlines s = Regex.Replace(s, @"\n", "")
+        let removeExtraSpaces s = Regex.Replace(s, @"\s+", " ")
         let private str s = pstring s
+        let private space s = (pchar ' ') s
         let private endOfSection s = (str "//") s
+
         let unwrap p str =
             match run p str with
             | Success(result, _, _) -> result
             | Failure(errorMsg, _, _) -> sprintf "%A" errorMsg
-        let pclassification s = 
-            ((str "UNCLASSIFIED" <|> str "SECRET") .>> endOfSection) s
-        let psubject s =
-            (str "SUBJ/" >>. str "foobarbaz") s
-        // let parseMessageText (info : MessageInfo) =
-        //     unwrap pclass "hello//"
+
+        let debug p str =
+            match run p str with
+            | Success(result, _, _) -> sprintf "%A" result
+            | Failure(errorMsg, _, _) -> sprintf "%A" errorMsg
+
+        let classification s = ((str "UNCLASSIFIED" <|> str "SECRET") .>> endOfSection) s
+
+        let sectionIdentifier s =
+            ([ "SUBJ"; "MSGID"; "NARR"; "RMKS" ]
+             |> List.map ((fun s -> sprintf "%s/" s) >> str)
+             |> List.reduce (<|>)) s
+
+        let sectionIdentifierFor name =
+            let id =
+                match name with
+                | "subject" -> "SUBJ"
+                | "messageId" -> "MSGID"
+                | "narrative" -> "NARR"
+                | "remarks" -> "RMKS"
+                | _ -> "UNKNOWN"
+            str (sprintf "%s/" id)
+
+        let sectionContent s =
+            spaces >>. sectionIdentifierFor s >>. (manyTill anyChar endOfSection) |>> List.map string
+            |>> List.reduce join |>> (removeNewlines >> removeExtraSpaces)
+        let subject s = (sectionContent "subject") s
+        let header s = (spaces >>. (manyTill anyChar sectionIdentifier) |>> List.map string |>> List.reduce join) s
+        let getSectionContent name s =
+            unwrap ((manyTill anyChar (followedBy (sectionIdentifierFor name))) >>. (sectionContent name)) s
+
+        let messageContent s =
+            (choice
+                [ classification
+                  header
+                  subject
+                  (sectionContent "messageId") ]) s
+
+        let message s = (spaces >>. messageContent) s
+        let parseMessageText s = run message s
 
 module Data =
     open Message

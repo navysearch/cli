@@ -132,7 +132,7 @@ let ``can chunk record text property``() =
                  Text = "123123" })
 
 [<Fact>]
-let ``can parse message text`` () =
+let ``can parse message text``() =
     let text = """
         UNCLASSIFIED//
 
@@ -153,18 +153,67 @@ let ``can parse message text`` () =
 
         MSGID/GENADMIN/CNO WASHINGTON DC/N1/MAY//
 
-        SUBJ/RECOMMENCEMENT OF SELECTION BOARDS AND ANNOUNCEMENT OF REVISED 
+        SUBJ/RECOMMENCEMENT OF SELECTION BOARDS AND ANNOUNCEMENT OF REVISED
         SCHEDULE//
+    """
 
-        REF/A/NAVADMIN/OPNAV/182232ZMAR20//    
+    let data =
+        { MessageType = NAVADMIN
+          Number = 42
+          Year = 15
+          Text = text }
+    getSectionContent "subject" data.Text
+    |> should equal "RECOMMENCEMENT OF SELECTION BOARDS AND ANNOUNCEMENT OF REVISED SCHEDULE"
+
+[<Fact>]
+let ``can parse message classification``() = unwrap classification "UNCLASSIFIED//" |> should equal "UNCLASSIFIED"
+
+[<Fact>]
+let ``can parse message header``() =
+    let text = """
+
+        ROUTINE
+
+        R 152131Z MAY 20 MID110000692205U
+
+        FM CNO WASHINGTON DC
+
+        TO NAVADMIN
+
+        INFO CNO WASHINGTON DC
+
+        BT
+        UNCLAS
+
+        NAVADMIN 144/20
+
+        MSGID/GENADMIN/CNO WASHINGTON DC/N4/APR//
     """
-    let subject = """
-        SUBJ/RECOMMENCEMENT OF SELECTION BOARDS AND ANNOUNCEMENT OF REVISED 
+    true |> should equal true
+
+[<Fact>]
+let ``can parse message ID``() =
+    let messageId = "MSGID/GENADMIN/CNO WASHINGTON DC/N1/MAY//"
+    unwrap (sectionContent "messageId") messageId |> should equal "GENADMIN/CNO WASHINGTON DC/N1/MAY"
+
+[<Fact>]
+let ``can parse section identifiers``() = unwrap sectionIdentifier "SUBJ/foobar" |> should equal "SUBJ/"
+
+[<Fact>]
+let ``can parse message subjects``() =
+    unwrap subject "SUBJ/foobarbaz//" |> should equal "foobarbaz"
+
+    let subjectWithNewline = """
+        SUBJ/RECOMMENCEMENT OF SELECTION BOARDS AND ANNOUNCEMENT OF REVISED
         SCHEDULE//
     """
-    let data = { MessageType = NAVADMIN
-                 Number = 42
-                 Year = 15
-                 Text = text }
-    unwrap pclassification "UNCLASSIFIED//" |> should equal "UNCLASSIFIED"
-    unwrap psubject "SUBJ/foobarbaz//" |> should equal "foobarbaz"
+    let subjectWithMultipleNewlines = """
+        SUBJ/GUIDANCE ON EVALUATION OF DEPLOYABILITY, TEMPORARY LIMITED DUTY, AND
+        REFERRAL TO THE DISABILITY EVALUATION SYSTEM (DES) DURING THE CORONAVIRUS
+        (COVID-19) PANDEMIC//
+    """
+    unwrap subject subjectWithNewline
+    |> should equal "RECOMMENCEMENT OF SELECTION BOARDS AND ANNOUNCEMENT OF REVISED SCHEDULE"
+    unwrap subject subjectWithMultipleNewlines
+    |> should equal
+           "GUIDANCE ON EVALUATION OF DEPLOYABILITY, TEMPORARY LIMITED DUTY, AND REFERRAL TO THE DISABILITY EVALUATION SYSTEM (DES) DURING THE CORONAVIRUS (COVID-19) PANDEMIC"
