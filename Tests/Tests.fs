@@ -4,6 +4,7 @@ open Xunit
 open FsUnit.Xunit
 open NavySearch.Common
 open NavySearch.Message
+open NavySearch.Message.Parser
 
 [<Fact>]
 let ``can take letters from a string``() =
@@ -129,3 +130,41 @@ let ``can chunk record text property``() =
                  Number = 42
                  Year = 15
                  Text = "123123" })
+
+[<Fact>]
+let ``can parse message text`` () =
+    let text = """
+        UNCLASSIFIED//
+
+        ROUTINE
+
+        R 152131Z MAY 20 MID110000692205U
+
+        FM CNO WASHINGTON DC
+
+        TO NAVADMIN
+
+        INFO CNO WASHINGTON DC
+
+        BT
+        UNCLAS
+
+        NAVADMIN 144/20
+
+        MSGID/GENADMIN/CNO WASHINGTON DC/N1/MAY//
+
+        SUBJ/RECOMMENCEMENT OF SELECTION BOARDS AND ANNOUNCEMENT OF REVISED 
+        SCHEDULE//
+
+        REF/A/NAVADMIN/OPNAV/182232ZMAR20//    
+    """
+    let subject = """
+        SUBJ/RECOMMENCEMENT OF SELECTION BOARDS AND ANNOUNCEMENT OF REVISED 
+        SCHEDULE//
+    """
+    let data = { MessageType = NAVADMIN
+                 Number = 42
+                 Year = 15
+                 Text = text }
+    unwrap pclassification "UNCLASSIFIED//" |> should equal "UNCLASSIFIED"
+    unwrap psubject "SUBJ/foobarbaz//" |> should equal "foobarbaz"

@@ -1,4 +1,5 @@
 FSharp.Core
 FSharp.Data
+FParsec
 Argu
 Algolia.Search

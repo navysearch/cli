@@ -4,6 +4,7 @@ open System
 open dotenv.net
 open Argu
 open NavySearch.Message
+open NavySearch.Message.Parser
 open NavySearch.Data
 open NavySearch.CommandLine
 
@@ -35,14 +36,17 @@ let main argv =
 
     let parser = ArgumentParser.Create<Arguments>(programName = "usn", errorHandler = errorHandler)
     let results = parser.ParseCommandLine argv
-    let data = getMessage NAVADMIN 20 3
-    data
-    |> sprintf "%s"
-    |> info
+    // let data = getMessage NAVADMIN 20 3
+    // data
+    // |> sprintf "%s"
+    // |> info
     results.GetAllResults()
     |> sprintf "Results are %A"
     |> warn
     results.GetResult(Files, defaultValue = [])
     |> sprintf "Files are %A"
     |> info
+
+    // let info = {MessageType = NAVADMIN; Number = 42; Year = 20; Text = "hello world"}
+    // parseMessageText info |> printfn "%A"
     0 // return an integer exit code

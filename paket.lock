@@ -9,6 +9,9 @@ NUGET
     coverlet.collector (1.0.1)
     dotenv.net (2.1)
       System.Memory (>= 4.5.4) - restriction: >= netstandard2.0
+    FParsec (1.1.1)
+      FSharp.Core (>= 4.3.4) - restriction: || (>= net45) (>= netstandard2.0)
+      System.ValueTuple (>= 4.4) - restriction: >= net45
     FSharp.Core (4.7.1)
     FSharp.Data (3.3.3)
       FSharp.Core (>= 4.0.0.1) - restriction: >= net45
@@ -252,6 +255,7 @@ NUGET
       System.Runtime (>= 4.3) - restriction: && (< monoandroid) (< monotouch) (< net45) (>= netstandard1.0) (< netstandard2.0) (< win8) (< wp8) (< wpa81) (< xamarintvos) (< xamarinwatchos)
       System.Runtime.CompilerServices.Unsafe (>= 4.5.3) - restriction: || (&& (< monoandroid) (< monotouch) (< net45) (>= netstandard1.0) (< netstandard2.0) (< win8) (< wpa81) (< xamarintvos) (< xamarinwatchos)) (&& (< monoandroid) (< netstandard1.0) (>= portable-net45+win8+wp8+wpa81) (< win8)) (&& (>= net45) (< netstandard2.0)) (&& (< net45) (< netcoreapp2.1) (>= netstandard2.0) (< xamarinios) (< xamarinmac)) (>= net461) (&& (< netstandard1.0) (>= win8)) (&& (< netstandard2.0) (>= wpa81)) (>= wp8)
       System.Threading.Tasks (>= 4.3) - restriction: && (< monoandroid) (< monotouch) (< net45) (>= netstandard1.0) (< netstandard2.0) (< win8) (< wp8) (< wpa81) (< xamarintvos) (< xamarinwatchos)
+    System.ValueTuple (4.5) - restriction: >= net45
     System.Windows.Extensions (4.7) - restriction: >= netcoreapp3.0
       System.Drawing.Common (>= 4.7) - restriction: >= netcoreapp3.0
     System.Xml.ReaderWriter (4.3.1) - restriction: && (< monoandroid) (< monotouch) (< net20) (>= netstandard1.3) (< netstandard2.0) (< xamarintvos) (< xamarinwatchos)

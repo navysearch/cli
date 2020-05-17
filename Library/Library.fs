@@ -2,10 +2,13 @@ namespace NavySearch
 
 open System
 open FSharp.Data
+open FParsec
 open Algolia.Search.Clients
 open Algolia.Search.Models.Search
 
 module Common =
+    let join acc item = sprintf "%s%s" acc item
+
     let getCurrentYear() = (string DateTime.Now.Year).[2..] |> int
 
     let takeLetters value =
@@ -17,7 +20,6 @@ module Common =
         match Seq.isEmpty letters with
         | true -> ""
         | false ->
-            let join acc item = sprintf "%s%s" acc item
             letters |> Seq.reduce (join)
 
 module Message =
@@ -145,6 +147,22 @@ module Message =
              >> List.map (string)
              >> List.reduce (fun acc item -> sprintf "%s%s" acc item)
              >> fun text -> { data with Text = text })
+
+    module Parser =
+        open Common
+
+        let private str s = pstring s
+        let private endOfSection s = (str "//") s
+        let unwrap p str =
+            match run p str with
+            | Success(result, _, _) -> result
+            | Failure(errorMsg, _, _) -> sprintf "%A" errorMsg
+        let pclassification s = 
+            ((str "UNCLASSIFIED" <|> str "SECRET") .>> endOfSection) s
+        let psubject s =
+            (str "SUBJ/" >>. str "foobarbaz") s
+        // let parseMessageText (info : MessageInfo) =
+        //     unwrap pclass "hello//"
 
 module Data =
     open Message
