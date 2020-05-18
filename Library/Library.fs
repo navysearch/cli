@@ -110,7 +110,7 @@ module Message =
     let parseMessageIdentifier (value: string) =
         let messageType =
             match takeLetters value with
-            | x when String.length (x) = 3 -> getType x
+            | x when String.length (x) = 3 -> getType (x.ToUpper())
             | "NAVADMIN" -> NAVADMIN
             | "ALNAV" -> ALNAV
             | _ -> UNKNOWN
@@ -190,6 +190,10 @@ module Message =
         let subject s = (sectionContent "subject") s
         let header s = (spaces >>. (manyTill anyChar sectionIdentifier) |>> List.map string |>> List.reduce join) s
         let getSectionContent name s =
+            let unwrap p str =
+                match run p str with
+                | Success(result, _, _) -> result
+                | Failure(_) -> "UNINTENTIONALLY LEFT BLANK"
             unwrap ((manyTill anyChar (followedBy (sectionIdentifierFor name))) >>. (sectionContent name)) s
 
         let messageContent s =
@@ -213,8 +217,10 @@ module Data =
         |> Seq.filter (fun (x: string) -> x.EndsWith(".txt"))
         |> Seq.toList
 
-    let getMessage messageType year number =
-        let url = sprintf "http://www.public.navy.mil/%s" (createMessageUriFragment messageType year number)
+    let getMessage info =
+        let url =
+            sprintf "http://www.public.navy.mil/%s"
+                (createMessageUriFragment info.MessageType info.Year info.Number)
         async {
             let! data = Http.AsyncRequestString(url)
             return data } |> Async.RunSynchronously

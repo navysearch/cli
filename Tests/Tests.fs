@@ -50,6 +50,8 @@ let ``can create message URL fragment``() =
     |> should equal "bupers-npc/reference/messages/Documents2/NAV2015/NAV15042.txt"
     createMessageUriFragment NAVADMIN 20 3
     |> should equal "bupers-npc/reference/messages/Documents/NAVADMINS/NAV2020/NAV20003.txt"
+    createMessageUriFragment NAVADMIN 20 93
+    |> should equal "bupers-npc/reference/messages/Documents/NAVADMINS/NAV2020/NAV20093.txt"
     createMessageUriFragment ALNAV 15 9
     |> should equal "bupers-npc/reference/messages/Documents/ALNAVS/ALN2015/ALN15009.txt"
     createMessageUriFragment ALNAV 20 123
@@ -99,12 +101,17 @@ let ``can parse message identifiers``() =
 
 [<Fact>]
 let ``can parse message URI``() =
-    let uri = "bupers-npc/reference/messages/Documents2/NAV2015/NAV15042.txt"
-    parseMessageUri uri
+    parseMessageUri "bupers-npc/reference/messages/Documents2/NAV2015/NAV15042.txt"
     |> should equal
            { MessageType = NAVADMIN
              Number = 42
              Year = 15
+             Text = "" }
+    parseMessageUri "/bupers-npc/reference/messages/Documents/NAVADMINS/NAV2020/nav20093.txt"
+    |> should equal
+           { MessageType = NAVADMIN
+             Number = 93
+             Year = 20
              Text = "" }
 
 [<Fact>]
