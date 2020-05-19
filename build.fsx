@@ -10,8 +10,8 @@ open Fake.IO
 
 Target.create "install" (fun _ ->
   Trace.log " --- Installing dependencies --- "
-  Shell.Exec ("paket", "install") |> ignore
-  Shell.Exec ("paket", "restore") |> ignore
+  DotNet.exec id "paket" "install" |> ignore
+  DotNet.exec id "paket" "restore" |> ignore
 )
 
 Target.create "build" (fun _ ->
