@@ -3,6 +3,5 @@ solution: navysearch.sln
 mono: none
 dotnet: 3.1.202
 script:
- - dotnet tool install --global paket
- - dotnet tool install --global fake-cli
- - fake build
+ - dotnet tool restore
+ - dotnet fake build
