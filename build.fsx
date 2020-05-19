@@ -16,12 +16,12 @@ Target.create "install" (fun _ ->
 
 Target.create "build" (fun _ ->
   Trace.log " --- Building files --- "
-  Shell.Exec ("dotnet", "build") |> ignore
+  DotNet.build id ""
 )
 
 Target.create "test" (fun _ -> 
   Trace.log " --- Running Tests ---"
-  Shell.Exec ("dotnet", "test") |> ignore
+  DotNet.test id "Tests"
 )
 
 Target.create "setup" (fun _ -> Trace.log " --- Project is ready --- ")
