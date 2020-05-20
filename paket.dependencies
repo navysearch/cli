@@ -1,6 +1,8 @@
 source https://api.nuget.org/v3/index.json
 
 nuget Algolia.Search 6.6.0
+nuget AltCover
+nuget altcover.fake
 nuget Argu 6.0.0
 nuget dotenv.net 2.1.0
 nuget FParsec
