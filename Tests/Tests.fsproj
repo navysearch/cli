@@ -13,5 +13,9 @@
     <ProjectReference Include="..\ConsoleApplication\ConsoleApplication.fsproj" />
     <ProjectReference Include="..\Library\Library.fsproj" />
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AltCover" Version="6.8.761" />
+    <PackageReference Include="dotnet-reportgenerator-cli" Version="4.5.8" />
+  </ItemGroup>
   <Import Project="..\.paket\Paket.Restore.targets" />
 </Project>
