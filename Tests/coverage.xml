@@ -2,55 +2,13 @@
 <CoverageSession xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <Summary numSequencePoints="203" visitedSequencePoints="138" numBranchPoints="183" visitedBranchPoints="64" sequenceCoverage="67.98" branchCoverage="34.97" maxCyclomaticComplexity="15" minCyclomaticComplexity="1" visitedClasses="63" numClasses="91" visitedMethods="84" numMethods="120" minCrapScore="1" maxCrapScore="18.52" />
   <Modules>
-    <Module skippedDueTo="Filter" hash="82-ED-C3-B0-5E-C6-9B-85-72-24-E7-42-6A-1F-D3-7A-92-31-88-3E">
-      <ModulePath>C:\Users\jason\dev\navysearch-cli\Tests\bin\Debug\netcoreapp3.1\__Saved\xunit.runner.utility.netcoreapp10.dll</ModulePath>
-      <ModuleTime>2018-07-17T09:18:28Z</ModuleTime>
-      <ModuleName>xunit.runner.utility.netcoreapp10</ModuleName>
-      <Classes />
-    </Module>
-    <Module skippedDueTo="Filter" hash="04-8A-E8-86-D2-B9-0C-14-B0-FB-AC-8F-85-2A-95-37-A1-72-00-13">
-      <ModulePath>C:\Users\jason\dev\navysearch-cli\Tests\bin\Debug\netcoreapp3.1\__Saved\xunit.core.dll</ModulePath>
-      <ModuleTime>2018-10-29T09:16:58Z</ModuleTime>
-      <ModuleName>xunit.core</ModuleName>
-      <Classes />
-    </Module>
-    <Module skippedDueTo="Filter" hash="B8-F5-F3-D5-06-36-35-76-5B-E0-BE-AB-80-32-9A-0C-1D-A8-76-19">
-      <ModulePath>C:\Users\jason\dev\navysearch-cli\Tests\bin\Debug\netcoreapp3.1\__Saved\xunit.assert.dll</ModulePath>
-      <ModuleTime>2018-10-29T09:16:52Z</ModuleTime>
-      <ModuleName>xunit.assert</ModuleName>
-      <Classes />
-    </Module>
-    <Module skippedDueTo="Filter" hash="8C-CB-BC-98-32-88-EC-B9-F9-C1-26-19-6F-6C-5B-4A-1C-C7-47-B2">
-      <ModulePath>C:\Users\jason\dev\navysearch-cli\Tests\bin\Debug\netcoreapp3.1\__Saved\FSharp.Core.dll</ModulePath>
-      <ModuleTime>2020-02-05T05:25:18Z</ModuleTime>
-      <ModuleName>FSharp.Core</ModuleName>
-      <Classes />
-    </Module>
-    <Module skippedDueTo="Filter" hash="16-7C-D1-8D-0E-08-82-D2-50-9C-9A-FF-7A-6F-C1-DB-D3-21-8A-72">
-      <ModulePath>C:\Users\jason\dev\navysearch-cli\Tests\bin\Debug\netcoreapp3.1\__Saved\xunit.runner.visualstudio.dotnetcore.testadapter.dll</ModulePath>
-      <ModuleTime>2018-07-17T09:18:28Z</ModuleTime>
-      <ModuleName>xunit.runner.visualstudio.dotnetcore.testadapter</ModuleName>
-      <Classes />
-    </Module>
-    <Module skippedDueTo="Filter" hash="0B-62-40-90-58-76-E8-86-0D-1A-DC-F5-78-DB-B7-94-BC-00-10-0C">
-      <ModulePath>C:\Users\jason\dev\navysearch-cli\Tests\bin\Debug\netcoreapp3.1\__Saved\xunit.runner.reporters.netcoreapp10.dll</ModulePath>
-      <ModuleTime>2018-07-17T09:18:26Z</ModuleTime>
-      <ModuleName>xunit.runner.reporters.netcoreapp10</ModuleName>
-      <Classes />
-    </Module>
-    <Module skippedDueTo="Filter" hash="E3-6E-00-D8-65-B5-77-8F-A6-87-2B-7E-91-AA-43-C2-F5-06-E3-D2">
-      <ModulePath>C:\Users\jason\dev\navysearch-cli\Tests\bin\Debug\netcoreapp3.1\__Saved\xunit.execution.dotnet.dll</ModulePath>
-      <ModuleTime>2018-10-29T09:17:00Z</ModuleTime>
-      <ModuleName>xunit.execution.dotnet</ModuleName>
-      <Classes />
-    </Module>
-    <Module hash="10-DF-38-E4-E4-7C-D4-43-5F-62-F9-A2-F0-8D-80-65-B0-46-D7-41">
+    <Module hash="97-A8-08-44-7A-23-0D-C6-6C-DC-D5-67-BE-C2-2E-AB-AC-C5-B3-95">
       <Summary numSequencePoints="203" visitedSequencePoints="138" numBranchPoints="183" visitedBranchPoints="64" sequenceCoverage="67.98" branchCoverage="34.97" maxCyclomaticComplexity="15" minCyclomaticComplexity="1" visitedClasses="63" numClasses="91" visitedMethods="84" numMethods="120" minCrapScore="1" maxCrapScore="18.52" />
-      <ModulePath>C:\Users\jason\dev\navysearch-cli\Tests\bin\Debug\netcoreapp3.1\__Saved\Library.dll</ModulePath>
-      <ModuleTime>2020-05-20T20:36:21.0541622Z</ModuleTime>
+      <ModulePath>C:\Users\jason\dev\cli\Tests\bin\Debug\netcoreapp3.1\__Saved\Library.dll</ModulePath>
+      <ModuleTime>2020-05-21T02:03:29.704391Z</ModuleTime>
       <ModuleName>Library</ModuleName>
       <Files>
-        <File uid="1" fullPath="C:\Users\jason\dev\navysearch-cli\Library\Library.fs" />
+        <File uid="1" fullPath="C:\Users\jason\dev\cli\Library\Library.fs" />
       </Files>
       <Classes>
         <Class>
@@ -2201,18 +2159,6 @@
           <Methods />
         </Class>
       </Classes>
-    </Module>
-    <Module skippedDueTo="Filter" hash="0C-1A-C2-CC-6E-99-3D-F1-48-64-DB-4C-2A-D2-ED-6C-A9-AF-CA-39">
-      <ModulePath>C:\Users\jason\dev\navysearch-cli\Tests\bin\Debug\netcoreapp3.1\__Saved\Tests.dll</ModulePath>
-      <ModuleTime>2020-05-20T20:41:32.9579227Z</ModuleTime>
-      <ModuleName>Tests</ModuleName>
-      <Classes />
-    </Module>
-    <Module skippedDueTo="Filter" hash="D8-23-7F-65-86-35-B8-AE-60-7F-FA-02-F1-4F-4E-BE-5F-5D-FA-04">
-      <ModulePath>C:\Users\jason\dev\navysearch-cli\Tests\bin\Debug\netcoreapp3.1\__Saved\ConsoleApplication.dll</ModulePath>
-      <ModuleTime>2020-05-20T20:36:24.7922585Z</ModuleTime>
-      <ModuleName>ConsoleApplication</ModuleName>
-      <Classes />
     </Module>
   </Modules>
 </CoverageSession>

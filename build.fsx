@@ -23,6 +23,7 @@ Target.create "test" (fun _ ->
     Trace.log " --- Running Tests ---"
     let setBaseOptions (o: DotNet.Options) =
         { o with
+              CustomParams = Some "/p:AltCover=true /p:AltCoverAssemblyFilter=\"ConsoleApplication|FSharp.Core|Tests|xunit\""
               WorkingDirectory = Path.getFullName "./Tests"
               Verbosity = Some DotNet.Verbosity.Minimal }
 
