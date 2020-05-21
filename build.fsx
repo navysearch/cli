@@ -23,11 +23,16 @@ Target.create "test" (fun _ ->
     Trace.log " --- Running Tests ---"
     let setBaseOptions (o: DotNet.Options) =
         { o with
-              CustomParams = Some "/p:AltCover=true /p:AltCoverAssemblyFilter=\"ConsoleApplication|FSharp.Core|Tests|xunit\""
+              CustomParams =
+                  Some "/p:AltCover=true /p:AltCoverAssemblyFilter=\"ConsoleApplication|FSharp.Core|Tests|xunit\""
               WorkingDirectory = Path.getFullName "./Tests"
               Verbosity = Some DotNet.Verbosity.Minimal }
 
     DotNet.test (fun o -> o.WithCommon(setBaseOptions)) "Tests.fsproj")
+
+Target.create "coverage" (fun _ ->
+    Trace.log " --- Generating Code Coverage ---"
+    Shell.Exec("reportgenerator", "-reports:coverage.xml -targetdir:coverage", "./Tests") |> ignore)
 
 Target.create "setup" (fun _ -> Trace.log " --- Project is ready --- ")
 
