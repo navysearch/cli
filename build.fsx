@@ -30,15 +30,14 @@ Target.create "test" (fun _ ->
 
     DotNet.test (fun o -> o.WithCommon(setBaseOptions)) "Tests.fsproj")
 
-Target.create "coverage" (fun _ ->
+Target.create "report" (fun _ ->
     Trace.log " --- Generating Code Coverage ---"
-    Shell.Exec("reportgenerator", "-reports:coverage.xml -targetdir:coverage", "./Tests") |> ignore)
-
-Target.create "setup" (fun _ -> Trace.log " --- Project is ready --- ")
+    Shell.Exec("reportgenerator", "-reports:coverage.xml -targetdir:coverage -reporttypes:Html;HtmlChart;TextSummary", "./Tests") |> ignore)
 
 open Fake.Core.TargetOperators
 
 // *** Define Dependencies ***
-"install" ==> "build" ==> "test" ==> "setup"
+"install" ==> "build"
+"test" ==> "report"
 
-Target.runOrDefault "setup"
+Target.runOrDefault "build"

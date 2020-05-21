@@ -1,0 +1,18 @@
+﻿Summary
+  Generated on: 5/21/2020 - 17:34:37 PM
+  Parser: OpenCoverParser
+  Assemblies: 1
+  Classes: 5
+  Files: 1
+  Line coverage: 70.5%
+  Covered lines: 103
+  Uncovered lines: 43
+  Coverable lines: 146
+  Total lines: 261
+
+Library                    70.5%
+  NavySearch.Algolia        0.0%
+  NavySearch.CommandLine    0.0%
+  NavySearch.Common       100.0%
+  NavySearch.Data           0.0%
+  NavySearch.Message       81.5%
