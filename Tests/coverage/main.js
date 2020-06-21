@@ -224,11 +224,11 @@ var assemblies = [
   {
     "name": "Library",
     "classes": [
-      { "name": "NavySearch.Algolia", "rp": "Library_Algolia.htm", "cl": 0, "ucl": 6, "cal": 6, "tl": 261, "ct": "LineCoverage", "mc": "-", "cb": 0, "tb": 0, "lch": [], "bch": [], "hc": [] },
-      { "name": "NavySearch.CommandLine", "rp": "Library_CommandLine.htm", "cl": 0, "ucl": 4, "cal": 4, "tl": 261, "ct": "LineCoverage", "mc": "-", "cb": 0, "tb": 0, "lch": [], "bch": [], "hc": [] },
-      { "name": "NavySearch.Common", "rp": "Library_Common.htm", "cl": 10, "ucl": 0, "cal": 10, "tl": 261, "ct": "LineCoverage", "mc": "-", "cb": 4, "tb": 4, "lch": [], "bch": [], "hc": [] },
-      { "name": "NavySearch.Data", "rp": "Library_Data.htm", "cl": 0, "ucl": 12, "cal": 12, "tl": 261, "ct": "LineCoverage", "mc": "-", "cb": 0, "tb": 0, "lch": [], "bch": [], "hc": [] },
-      { "name": "NavySearch.Message", "rp": "Library_Message.htm", "cl": 93, "ucl": 21, "cal": 114, "tl": 261, "ct": "LineCoverage", "mc": "-", "cb": 46, "tb": 59, "lch": [], "bch": [], "hc": [] },
+      { "name": "NavySearch.Algolia", "rp": "Library_Algolia.htm", "cl": 0, "ucl": 16, "cal": 16, "tl": 284, "ct": "LineCoverage", "mc": "-", "cb": 2, "tb": 2, "lch": [], "bch": [], "hc": [] },
+      { "name": "NavySearch.CommandLine", "rp": "Library_CommandLine.htm", "cl": 0, "ucl": 5, "cal": 5, "tl": 284, "ct": "LineCoverage", "mc": "-", "cb": 0, "tb": 0, "lch": [], "bch": [], "hc": [] },
+      { "name": "NavySearch.Common", "rp": "Library_Common.htm", "cl": 10, "ucl": 0, "cal": 10, "tl": 284, "ct": "LineCoverage", "mc": "-", "cb": 4, "tb": 4, "lch": [], "bch": [], "hc": [] },
+      { "name": "NavySearch.Data", "rp": "Library_Data.htm", "cl": 0, "ucl": 12, "cal": 12, "tl": 284, "ct": "LineCoverage", "mc": "-", "cb": 0, "tb": 0, "lch": [], "bch": [], "hc": [] },
+      { "name": "NavySearch.Message", "rp": "Library_Message.htm", "cl": 95, "ucl": 20, "cal": 115, "tl": 284, "ct": "LineCoverage", "mc": "-", "cb": 46, "tb": 59, "lch": [], "bch": [], "hc": [] },
     ]},
 ];
 
@@ -242,7 +242,7 @@ var riskHotspotMetrics = [
 
 var riskHotspots = [
   {
-    "assembly": "Library", "class": "NavySearch.Message", "reportPath": "Library_Message.htm", "methodName": "System.String NavySearch.Message::createNpcPageUrl(NavySearch.Message/MessageType,System.Int32)", "methodShortName": "createNpcPageUrl(...)", "fileIndex": 0, "line": 58,
+    "assembly": "Library", "class": "NavySearch.Message", "reportPath": "Library_Message.htm", "methodName": "System.String NavySearch.Message::createNpcPageUrl(NavySearch.Message/MessageType,System.Int32)", "methodShortName": "createNpcPageUrl(...)", "fileIndex": 0, "line": 60,
     "metrics": [
       { "value": 15, "exceeded": false },
       { "value": 12, "exceeded": false },

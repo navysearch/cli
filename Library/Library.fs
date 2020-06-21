@@ -6,6 +6,8 @@ open FSharp.Data
 open FParsec
 open Algolia.Search.Clients
 open Algolia.Search.Models.Search
+open Algolia.Search.Models.Settings
+open Algolia.Search.Models.Common
 
 module Common =
     let join acc item = sprintf "%s%s" acc item
@@ -154,7 +156,6 @@ module Message =
         let removeNewlines s = Regex.Replace(s, @"\n", "")
         let removeExtraSpaces s = Regex.Replace(s, @"\s+", " ")
         let private str s = pstring s
-        let private space s = (pchar ' ') s
         let private endOfSection s = (str "//") s
 
         let unwrap p str =
@@ -169,26 +170,29 @@ module Message =
 
         let classification s = ((str "UNCLASSIFIED" <|> str "SECRET") .>> endOfSection) s
 
-        let sectionIdentifier s =
-            ([ "SUBJ"; "MSGID"; "NARR"; "RMKS" ]
-             |> List.map ((fun s -> sprintf "%s/" s) >> str)
-             |> List.reduce (<|>)) s
+        let sectionIdentifier =
+            choice
+                [ str "SUBJ/"
+                  str "MSGID/"
+                  str "NARR/"
+                  str "RMKS/" ]
 
         let sectionIdentifierFor name =
             let id =
                 match name with
-                | "subject" -> "SUBJ"
-                | "messageId" -> "MSGID"
-                | "narrative" -> "NARR"
-                | "remarks" -> "RMKS"
+                | "subject" -> "SUBJ/"
+                | "messageId" -> "MSGID/"
+                | "narrative" -> "NARR/"
+                | "remarks" -> "RMKS/"
                 | _ -> "UNKNOWN"
-            str (sprintf "%s/" id)
+            str id
 
         let sectionContent s =
             spaces >>. sectionIdentifierFor s >>. (manyTill anyChar endOfSection) |>> List.map string
             |>> List.reduce join |>> (removeNewlines >> removeExtraSpaces)
         let subject s = (sectionContent "subject") s
         let header s = (spaces >>. (manyTill anyChar sectionIdentifier) |>> List.map string |>> List.reduce join) s
+
         let getSectionContent name s =
             let unwrap p str =
                 match run p str with
@@ -200,7 +204,7 @@ module Message =
             (choice
                 [ classification
                   header
-                  subject
+                  (sectionContent "subject")
                   (sectionContent "messageId") ]) s
 
         let message s = (spaces >>. messageContent) s
@@ -226,7 +230,8 @@ module Data =
             return data } |> Async.RunSynchronously
 
 module Algolia =
-    type Hit =
+    open System.Collections.Generic
+    type MessageData =
         { objectID: string
           id: string
           year: string
@@ -237,15 +242,33 @@ module Algolia =
           text: string
           url: string }
 
-    let getMessagesForYear (id: string) (key: string) (year: int) =
+    let getIndex (id: string) (key: string) (name: string) =
         let client = SearchClient(id, key)
-        let index = client.InitIndex("message")
-        let results = index.Search(Query())
-        results.Hits
-        |> Seq.map (fun x -> x.subject)
-        |> Seq.take 10
+        let index = client.InitIndex(name)
+        let settings = IndexSettings()
+        let searchableAttributes = new List<string>()
+        searchableAttributes.Add("year")
+        settings.HitsPerPage <- Nullable(1000L)
+        settings.PaginationLimitedTo <- Nullable(1000L)
+        settings.SearchableAttributes  <- searchableAttributes
+        index.SetSettings(settings) |> ignore
+        index
+
+    let saveMessageData (id: string) (key: string) (data: MessageData list) =
+        id
+
+    let getAllMessageData (id: string) (key: string) =
+        let index = getIndex id key "message"
+        seq { for i in index.Browse(BrowseIndexQuery()) -> i } :> seq<MessageData>
+
+    let getYearMessageData (id: string) (key: string) (year: int) : seq<MessageData> =
+        let index = getIndex id key "message"
+        let results = index.Search(Query(string year))
+        results.Hits :> seq<MessageData>
 
 module CommandLine =
+    let getEnvVar name = Environment.GetEnvironmentVariable(name)
+
     let log =
         let lockObj = obj()
         fun color s ->

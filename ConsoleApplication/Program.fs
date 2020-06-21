@@ -6,6 +6,7 @@ open Argu
 open NavySearch.Message
 open NavySearch.Message.Parser
 open NavySearch.Data
+open NavySearch.Algolia
 open NavySearch.CommandLine
 
 DotEnv.Config()
@@ -36,17 +37,11 @@ let main argv =
 
     let parser = ArgumentParser.Create<Arguments>(programName = "usn", errorHandler = errorHandler)
     let results = parser.ParseCommandLine argv
-    // let data = getMessage NAVADMIN 20 3
-    // data
-    // |> sprintf "%s"
-    // |> info
-    results.GetAllResults()
-    |> sprintf "Results are %A"
-    |> warn
-    results.GetResult(Files, defaultValue = [])
-    |> sprintf "Files are %A"
-    |> info
+    
+    let id = getEnvVar "ALGOLIA_APP_ID"
+    let key = getEnvVar "ALGOLIA_ADMIN_API_KEY"
 
-    // let info = {MessageType = NAVADMIN; Number = 42; Year = 20; Text = "hello world"}
-    // parseMessageText info |> printfn "%A"
+    id |> info
+    key |> info
+
     0 // return an integer exit code
