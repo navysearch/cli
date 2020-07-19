@@ -2,13 +2,13 @@
 <CoverageSession xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <Summary numSequencePoints="214" visitedSequencePoints="142" numBranchPoints="183" visitedBranchPoints="67" sequenceCoverage="66.36" branchCoverage="36.61" maxCyclomaticComplexity="15" minCyclomaticComplexity="1" visitedClasses="62" numClasses="87" visitedMethods="82" numMethods="118" minCrapScore="1" maxCrapScore="18.52" />
   <Modules>
-    <Module hash="DC-EF-82-5D-0C-46-1D-82-2B-74-BF-55-33-4A-00-EB-2F-9F-01-5B">
+    <Module hash="C8-F0-1B-C3-70-D6-CF-17-85-1D-03-0F-CC-EA-76-E2-67-65-3D-CD">
       <Summary numSequencePoints="214" visitedSequencePoints="142" numBranchPoints="183" visitedBranchPoints="67" sequenceCoverage="66.36" branchCoverage="36.61" maxCyclomaticComplexity="15" minCyclomaticComplexity="1" visitedClasses="62" numClasses="87" visitedMethods="82" numMethods="118" minCrapScore="1" maxCrapScore="18.52" />
-      <ModulePath>C:\Users\jason\dev\navysearch-cli\Tests\bin\Debug\netcoreapp3.1\__Saved\Library.dll</ModulePath>
-      <ModuleTime>2020-06-21T20:04:23.8566414Z</ModuleTime>
+      <ModulePath>C:\Users\jason\dev\cli\Tests\bin\Debug\netcoreapp3.1\__Saved\Library.dll</ModulePath>
+      <ModuleTime>2020-07-19T16:34:48.0481353Z</ModuleTime>
       <ModuleName>Library</ModuleName>
       <Files>
-        <File uid="1" fullPath="C:\Users\jason\dev\navysearch-cli\Library\Library.fs" />
+        <File uid="1" fullPath="C:\Users\jason\dev\cli\Library\Library.fs" />
       </Files>
       <Classes>
         <Class>
