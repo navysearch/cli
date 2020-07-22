@@ -37,6 +37,16 @@ module Message =
           Number: int
           Year: int
           Text: string }
+  
+    type MessageData =
+        { MessageType: MessageType
+          MessageId: string
+          Number: int
+          Year: int
+          Text: string
+          Code: string
+          Subject: string
+          Url: Uri }
 
     let getType code =
         match code with
@@ -125,18 +135,12 @@ module Message =
           Text = "" }
 
     let parseMessageUri (value: string) =
-        let head (x: string list) = x.Head
-
-        let filename =
-            value.Split('/')
-            |> Array.toList
-            |> List.rev
-            |> head
-
+        let url = Uri (sprintf "http://public.navy.mil%s" value)
         let messageIdentifier =
-            filename.Split('.')
-            |> Array.toList
-            |> head
+            url.Segments
+            |> Array.last
+            |> fun s -> s.Split('.')
+            |> Array.head
 
         parseMessageIdentifier messageIdentifier
 
@@ -151,8 +155,6 @@ module Message =
              >> fun text -> { data with Text = text })
 
     module Parser =
-        open Common
-
         let removeNewlines s = Regex.Replace(s, @"\n", "")
         let removeExtraSpaces s = Regex.Replace(s, @"\s+", " ")
         let private str s = pstring s
@@ -221,25 +223,38 @@ module Data =
         |> Seq.filter (fun (x: string) -> x.EndsWith(".txt"))
         |> Seq.toList
 
-    let getMessage info =
+    let getMessageData (info : MessageInfo) =
         let url =
             sprintf "http://www.public.navy.mil/%s"
                 (createMessageUriFragment info.MessageType info.Year info.Number)
         async {
             let! data = Http.AsyncRequestString(url)
-            return data } |> Async.RunSynchronously
+            return {
+                MessageId = createMessageId info.MessageType info.Year info.Number
+                MessageType = info.MessageType
+                Code = ""
+                Number = info.Number
+                Year = info.Year
+                Text = data
+                Subject = ""
+                Url = Uri url }
+            } |> Async.RunSynchronously
+
+    let getMessageDataByYear messageType year =
+        scrapeMessageLinks messageType year
+        |> List.map (parseMessageUri >> getMessageData)
 
 module Algolia =
     open System.Collections.Generic
-    type MessageData =
+    type AlgoliaData =
         { objectID: string
           id: string
-          year: string
-          num: string
           ``type``: string
           code: string
-          subject: string
+          num: string
+          year: string
           text: string
+          subject: string
           url: string }
 
     let getIndex (id: string) (key: string) (name: string) =
@@ -254,17 +269,18 @@ module Algolia =
         index.SetSettings(settings) |> ignore
         index
 
-    let saveMessageData (id: string) (key: string) (data: MessageData list) =
+    let saveData (id: string) (key: string) (data: AlgoliaData list) =
+        // MessageInfo -> MessageData
         id
 
-    let getAllMessageData (id: string) (key: string) =
+    let getData (id: string) (key: string) =
         let index = getIndex id key "message"
-        seq { for i in index.Browse(BrowseIndexQuery()) -> i } :> seq<MessageData>
+        seq { for i in index.Browse(BrowseIndexQuery()) -> i } :> seq<AlgoliaData>
 
-    let getYearMessageData (id: string) (key: string) (year: int) : seq<MessageData> =
+    let getDataByYear (id: string) (key: string) (year: int) : seq<AlgoliaData> =
         let index = getIndex id key "message"
         let results = index.Search(Query(string year))
-        results.Hits :> seq<MessageData>
+        results.Hits :> seq<AlgoliaData>
 
 module CommandLine =
     let getEnvVar name = Environment.GetEnvironmentVariable(name)

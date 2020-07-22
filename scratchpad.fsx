@@ -11,14 +11,22 @@
 #r "dotenv.net.dll"
 #r @"Library\bin\Debug\netstandard2.0\Library.dll"
 
+open System
+open System.Net
+
 open dotenv.net
 open NavySearch.Algolia
 open NavySearch.CommandLine
+open NavySearch.Data
+open NavySearch.Message
 
-DotEnv.Config()
-let id = getEnvVar "ALGOLIA_APP_ID"
-let key = getEnvVar "ALGOLIA_ADMIN_API_KEY"
+// DotEnv.Config()
+// let id = getEnvVar "ALGOLIA_APP_ID"
+// let key = getEnvVar "ALGOLIA_ADMIN_API_KEY"
 
-let data = getAllMessageData id key
+let messages = getMessages NAVADMIN 20
+messages.Length
 
-data |> Seq.length
+// let url = Uri "https://www.public.navy.mil/bupers-npc/reference/messages/Documents/NAVADMINS/NAV2020/NAV20203.txt"
+// let client = new WebClient()
+// let message = client.DownloadFile(url, "NAV20203.txt")

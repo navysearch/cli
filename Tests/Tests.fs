@@ -101,7 +101,7 @@ let ``can parse message identifiers``() =
 
 [<Fact>]
 let ``can parse message URI``() =
-    parseMessageUri "bupers-npc/reference/messages/Documents2/NAV2015/NAV15042.txt"
+    parseMessageUri "/bupers-npc/reference/messages/Documents2/NAV2015/NAV15042.txt"
     |> should equal
            { MessageType = NAVADMIN
              Number = 42
