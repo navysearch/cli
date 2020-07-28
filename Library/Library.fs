@@ -182,15 +182,15 @@ module Message =
         let sectionIdentifierFor name =
             let id =
                 match name with
-                | "subject" -> "SUBJ/"
-                | "messageId" -> "MSGID/"
-                | "narrative" -> "NARR/"
-                | "remarks" -> "RMKS/"
+                | "subject" -> "SUBJ"
+                | "messageId" -> "MSGID"
+                | "narrative" -> "NARR"
+                | "remarks" -> "RMKS"
                 | _ -> "UNKNOWN"
             str id
 
         let sectionContent s =
-            spaces >>. sectionIdentifierFor s >>. (manyTill anyChar endOfSection) |>> List.map string
+            spaces >>. sectionIdentifierFor s .>> anyOf "/:" >>. spaces >>. (manyTill anyChar endOfSection) |>> List.map string
             |>> List.reduce join |>> (removeNewlines >> removeExtraSpaces)
         let subject s = (sectionContent "subject") s
         let header s = (spaces >>. (manyTill anyChar sectionIdentifier) |>> List.map string |>> List.reduce join) s
@@ -214,6 +214,7 @@ module Message =
 
 module Data =
     open Message
+    open Message.Parser
 
     let scrapeMessageLinks messageType year =
         let url = (createNpcPageUrl messageType year)
@@ -236,7 +237,7 @@ module Data =
                 Number = info.Number
                 Year = info.Year
                 Text = data
-                Subject = ""
+                Subject = getSectionContent "subject" data
                 Url = Uri url }
             } |> Async.RunSynchronously
 
