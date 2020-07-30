@@ -279,14 +279,15 @@ module Data =
             Outcome.OK fileName
         with e -> Outcome.Failed fileName
 
-    let DownloadMessages messageType year localPath =
-        let links = getLinks messageType year
-
+    let DownloadLinks links localPath =
         let downloaded, failed =
             links
             |> Array.map (tryDownload localPath)
             |> Array.partition Outcome.isOk
         downloaded |> Array.map Outcome.fileName, failed |> Array.map Outcome.fileName
+
+    let DownloadMessagesByYear messageType year localPath =
+        DownloadLinks (getLinks messageType year) localPath
 
 module Algolia =
     open System.Collections.Generic
