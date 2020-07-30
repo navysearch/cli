@@ -9,6 +9,21 @@ open Algolia.Search.Models.Search
 open Algolia.Search.Models.Settings
 open Algolia.Search.Models.Common
 
+
+module Outcome =
+    type Outcome =
+        | OK of filename: string
+        | Failed of filename: string
+
+    let isOk =
+        function
+        | OK _ -> true
+        | Failed _ -> false
+
+    let fileName = function
+        | OK fn
+        | Failed fn -> fn
+
 module Common =
     let join acc item = sprintf "%s%s" acc item
 
@@ -37,7 +52,7 @@ module Message =
           Number: int
           Year: int
           Text: string }
-  
+
     type MessageData =
         { MessageType: MessageType
           MessageId: string
@@ -135,7 +150,8 @@ module Message =
           Text = "" }
 
     let parseMessageUri (value: string) =
-        let url = Uri (sprintf "http://public.navy.mil%s" value)
+        let url = Uri(sprintf "http://public.navy.mil%s" value)
+
         let messageIdentifier =
             url.Segments
             |> Array.last
@@ -190,8 +206,8 @@ module Message =
             str id
 
         let sectionContent s =
-            spaces >>. sectionIdentifierFor s .>> anyOf "/:" >>. spaces >>. (manyTill anyChar endOfSection) |>> List.map string
-            |>> List.reduce join |>> (removeNewlines >> removeExtraSpaces)
+            spaces >>. sectionIdentifierFor s .>> anyOf "/:" >>. spaces >>. (manyTill anyChar endOfSection)
+            |>> List.map string |>> List.reduce join |>> (removeNewlines >> removeExtraSpaces)
         let subject s = (sectionContent "subject") s
         let header s = (spaces >>. (manyTill anyChar sectionIdentifier) |>> List.map string |>> List.reduce join) s
 
@@ -213,6 +229,8 @@ module Message =
         let parseMessageText s = run message s
 
 module Data =
+    open System.IO
+    open System.Net
     open Message
     open Message.Parser
 
@@ -224,29 +242,55 @@ module Data =
         |> Seq.filter (fun (x: string) -> x.EndsWith(".txt"))
         |> Seq.toList
 
-    let getMessageData (info : MessageInfo) =
+    let getMessageData (info: MessageInfo) =
         let url =
             sprintf "http://www.public.navy.mil/%s"
                 (createMessageUriFragment info.MessageType info.Year info.Number)
         async {
             let! data = Http.AsyncRequestString(url)
-            return {
-                MessageId = createMessageId info.MessageType info.Year info.Number
-                MessageType = info.MessageType
-                Code = ""
-                Number = info.Number
-                Year = info.Year
-                Text = data
-                Subject = getSectionContent "subject" data
-                Url = Uri url }
-            } |> Async.RunSynchronously
+            return { MessageId = createMessageId info.MessageType info.Year info.Number
+                     MessageType = info.MessageType
+                     Code = ""
+                     Number = info.Number
+                     Year = info.Year
+                     Text = data
+                     Subject = getSectionContent "subject" data
+                     Url = Uri url }
+        }
+        |> Async.RunSynchronously
 
     let getMessageDataByYear messageType year =
+        scrapeMessageLinks messageType year |> List.map (parseMessageUri >> getMessageData)
+
+
+    let private absoluteUri (messageUri: string) = Uri(sprintf "http://www.public.navy.mil%s" messageUri)
+
+    let private getLinks messageType year =
         scrapeMessageLinks messageType year
-        |> List.map (parseMessageUri >> getMessageData)
+        |> List.map absoluteUri
+        |> Array.ofList
+
+    let private tryDownload (localPath: string) (fileUri: Uri) =
+        let fileName = fileUri.Segments |> Array.last
+        let filePath = Path.Combine(localPath, fileName)
+        use client = new WebClient()
+        try
+            client.DownloadFile(fileUri, filePath)
+            Outcome.OK fileName
+        with e -> Outcome.Failed fileName
+
+    let DownloadMessages messageType year localPath =
+        let links = getLinks messageType year
+
+        let downloaded, failed =
+            links
+            |> Array.map (tryDownload localPath)
+            |> Array.partition Outcome.isOk
+        downloaded |> Array.map Outcome.fileName, failed |> Array.map Outcome.fileName
 
 module Algolia =
     open System.Collections.Generic
+
     type AlgoliaData =
         { objectID: string
           id: string
@@ -266,7 +310,7 @@ module Algolia =
         searchableAttributes.Add("year")
         settings.HitsPerPage <- Nullable(1000L)
         settings.PaginationLimitedTo <- Nullable(1000L)
-        settings.SearchableAttributes  <- searchableAttributes
+        settings.SearchableAttributes <- searchableAttributes
         index.SetSettings(settings) |> ignore
         index
 
@@ -276,9 +320,11 @@ module Algolia =
 
     let getData (id: string) (key: string) =
         let index = getIndex id key "message"
-        seq { for i in index.Browse(BrowseIndexQuery()) -> i } :> seq<AlgoliaData>
+        seq {
+            for i in index.Browse(BrowseIndexQuery()) -> i
+        } :> seq<AlgoliaData>
 
-    let getDataByYear (id: string) (key: string) (year: int) : seq<AlgoliaData> =
+    let getDataByYear (id: string) (key: string) (year: int): seq<AlgoliaData> =
         let index = getIndex id key "message"
         let results = index.Search(Query(string year))
         results.Hits :> seq<AlgoliaData>

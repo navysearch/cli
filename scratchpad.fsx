@@ -25,8 +25,13 @@ open NavySearch.Message.Parser
 // let id = getEnvVar "ALGOLIA_APP_ID"
 // let key = getEnvVar "ALGOLIA_ADMIN_API_KEY"
 
-let messages = getMessageDataByYear NAVADMIN 20
-messages |> List.filter (fun x -> x.Subject = "UNINTENTIONALLY LEFT BLANK") |> List.map (fun x -> x.Number)
+// let messages = getMessageDataByYear NAVADMIN 20
+// messages |> List.filter (fun x -> x.Subject = "UNINTENTIONALLY LEFT BLANK") |> List.map (fun x -> x.Number)
 // let url = Uri "https://www.public.navy.mil/bupers-npc/reference/messages/Documents/NAVADMINS/NAV2020/NAV20203.txt"
 // let client = new WebClient()
 // let message = client.DownloadFile(url, "NAV20203.txt")
+
+let localPath = @"C:\Users\jason\dev\messages"
+
+let downloaded, failed = DownloadMessages NAVADMIN 20 localPath
+failed
