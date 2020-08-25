@@ -10,6 +10,8 @@ open NavySearch.Algolia
 open NavySearch.CommandLine
 
 DotEnv.Config()
+// let id = getEnvVar "ALGOLIA_APP_ID"
+// let key = getEnvVar "ALGOLIA_ADMIN_API_KEY"
 
 [<CliPrefix(CliPrefix.DoubleDash)>]
 [<NoAppSettings>]
